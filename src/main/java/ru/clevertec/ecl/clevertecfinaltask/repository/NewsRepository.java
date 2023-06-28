@@ -14,4 +14,5 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     @Query(value = "SELECT * FROM news WHERE to_tsvector('english', title || ' ' || text) @@ to_tsquery('english', ?1)", countQuery = "SELECT COUNT(*) FROM news WHERE to_tsvector('english', title || ' ' || text) @@ to_tsquery('english', ?1)", nativeQuery = true)
     Page<News> searchByTitleOrText(String keyword, Pageable pageable);
 
+    void deleteById(Long id);
 }

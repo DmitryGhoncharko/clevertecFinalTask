@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.clevertec.ecl.clevertecfinaltask.entity.Comment;
 
+import java.util.Optional;
+
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -14,4 +16,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query(value = "SELECT * FROM comments WHERE to_tsvector('english', text || ' ' || username) @@ to_tsquery('english', ?1)", countQuery = "SELECT COUNT(*) FROM comments WHERE to_tsvector('english', text || ' ' || username) @@ to_tsquery('english', ?1)", nativeQuery = true)
     Page<Comment> searchByTextOrUsername(String keyword, Pageable pageable);
+
+    void deleteById(Long id);
+
 }

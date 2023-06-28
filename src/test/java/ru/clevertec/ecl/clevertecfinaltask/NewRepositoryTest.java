@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.ecl.clevertecfinaltask.entity.Comment;
 import ru.clevertec.ecl.clevertecfinaltask.entity.News;
+import ru.clevertec.ecl.clevertecfinaltask.repository.CommentRepository;
 import ru.clevertec.ecl.clevertecfinaltask.repository.NewsRepository;
 
 import java.util.List;
@@ -17,6 +19,9 @@ import java.util.List;
 class NewRepositoryTest {
     @Autowired
     private NewsRepository newsRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Test
     @Transactional
@@ -33,9 +38,10 @@ class NewRepositoryTest {
 //
 //        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, News.class);
 //        System.out.println(jpaQuery.getResultList());
-        Page<News> list =  newsRepository.searchByTitleOrText("test", Pageable.ofSize(2));
-        for (News news : list) {
-            Hibernate.initialize(news.getComments()); // Инициализация коллекции comments
+        Page<Comment> list =  commentRepository.findAll(Pageable.ofSize(2));
+        list.forEach(comment -> Hibernate.initialize(comment.getNews()));
+        for(Comment news : list){
+            System.out.println(news);
         }
         System.out.println(list);
     }

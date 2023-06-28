@@ -27,11 +27,9 @@ public class News {
     private LocalDateTime time;
 
     @Column(nullable = false)
-
     private String title;
 
     @Column(nullable = false)
-
     private String text;
 
     @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

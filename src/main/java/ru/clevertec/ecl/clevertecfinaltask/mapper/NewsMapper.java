@@ -10,5 +10,6 @@ public interface NewsMapper {
     NewsMapper INSTANCE = Mappers.getMapper(NewsMapper.class);
 
     NewsDTO toDto(News news);
+
     News toEntity(NewsDTO newsDTO);
 }

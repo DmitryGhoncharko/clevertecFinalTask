@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "comments")
 @Data
-
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +25,9 @@ public class Comment {
     private LocalDateTime time;
 
     @Column(nullable = false)
-
     private String text;
 
     @Column(nullable = false)
-
     private String username;
 
     @ManyToOne(fetch = FetchType.LAZY)
