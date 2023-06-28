@@ -18,5 +18,7 @@ public interface NewsService {
 
     List<NewsDTO> findAll(Pageable pageable);
 
+    List<NewsDTO> findAllWithoutComments(Pageable pageable);
+
     List<NewsDTO> searchByTitleOrText(String keyword, Pageable pageable);
 }

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.ecl.clevertecfinaltask.dto.NewsDTO;
 import ru.clevertec.ecl.clevertecfinaltask.dto.Views;
 import ru.clevertec.ecl.clevertecfinaltask.service.NewsService;
-
 import java.util.List;
 
 @RestController
@@ -53,7 +52,10 @@ public class NewsController {
     public ResponseEntity<List<NewsDTO>> getAllNews(@PathVariable int pageNumber, @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
         return ResponseEntity.ok(newsService.findAll(PageRequest.of(pageNumber, pageSize)));
     }
-
+    @GetMapping("/all-without-comments/{pageNumber}")
+    public ResponseEntity<List<NewsDTO>> getAllNewsWithoutComments(@PathVariable int pageNumber, @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+        return ResponseEntity.ok(newsService.findAllWithoutComments(PageRequest.of(pageNumber, pageSize)));
+    }
     @GetMapping("/search/{keyword}/{pageNumber}")
     public ResponseEntity<List<NewsDTO>> searchNewsByTitleOrText(@PathVariable String keyword, @PathVariable int pageNumber, @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
         return ResponseEntity.ok(newsService.searchByTitleOrText(keyword, PageRequest.of(pageNumber, pageSize)));
