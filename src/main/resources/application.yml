@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: prod
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task
+    username: postgres
+    password: jmXzj3eV
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.xml
+  main:
+    allow-bean-definition-overriding: true
