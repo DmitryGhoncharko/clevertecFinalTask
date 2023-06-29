@@ -7,6 +7,6 @@ spring:
     password: jmXzj3eV
     driver-class-name: org.postgresql.Driver
   liquibase:
-    change-log: classpath:db/changelog/changelog-master.xml
+    change-log: classpath:db.changelog/changelog-master.xml
   main:
     allow-bean-definition-overriding: true
