@@ -10,3 +10,6 @@ spring:
     change-log: classpath:db.changelog/changelog-master.xml
   main:
     allow-bean-definition-overriding: true
+cache:
+  algorithm: LRU
+  maxSize: 100

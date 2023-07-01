@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.ecl.clevertecfinaltask.cache.Cache;
+import ru.clevertec.ecl.clevertecfinaltask.cache.CommentsCacheManager;
 import ru.clevertec.ecl.clevertecfinaltask.dto.CommentDTO;
 import ru.clevertec.ecl.clevertecfinaltask.entity.Comment;
 import ru.clevertec.ecl.clevertecfinaltask.entity.News;
@@ -27,13 +29,15 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
 
+    private final CommentsCacheManager commentsCacheManager;
+
 
     @Override
     @Transactional
     public CommentDTO create(CommentDTO commentDTO) {
         commentDTO.setTime(LocalDateTime.now());
         Optional<News> newsOptional = newsRepository.findById(commentDTO.getNewsId());
-        if(newsOptional.isPresent()){
+        if (newsOptional.isPresent()) {
             Comment comment = new Comment();
             comment.setUsername(commentDTO.getUsername());
             comment.setTime(commentDTO.getTime());
@@ -41,6 +45,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setNews(newsOptional.get());
             Comment commentAfetSave = commentRepository.save(comment);
             Hibernate.initialize(commentAfetSave.getNews().getId());
+            commentsCacheManager.getCache().put(commentAfetSave.getId(), commentAfetSave);
             return CommentMapper.INSTANCE.toDto(commentAfetSave);
         }
         throw new CannotCreateCommentError(commentDTO.toString());
@@ -57,7 +62,9 @@ public class CommentServiceImpl implements CommentService {
             comment.setNews(existingNews.get());
             comment.setText(commentDTO.getText());
             comment.setUsername(commentDTO.getUsername());
-            return CommentMapper.INSTANCE.toDto(commentRepository.save(comment));
+            Comment commentAfterSave = commentRepository.save(comment);
+            commentsCacheManager.getCache().put(commentAfterSave.getId(), commentAfterSave);
+            return CommentMapper.INSTANCE.toDto(commentAfterSave);
         }
         throw new CannotUpdateCommentError(commentDTO.toString());
     }
@@ -68,6 +75,7 @@ public class CommentServiceImpl implements CommentService {
         Optional<Comment> comment = commentRepository.findById(id);
         if (comment.isPresent()) {
             commentRepository.deleteById(id);
+            commentsCacheManager.getCache().remove(id);
             return;
         }
         throw new CannotDeleteCommentError(id.toString());
@@ -76,7 +84,15 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public Optional<CommentDTO> getById(Long id) {
-        return Optional.of(CommentMapper.INSTANCE.toDto(commentRepository.getReferenceById(id)));
+        Optional<Comment> commentOptional = commentsCacheManager.getCache().get(id);
+        if (commentOptional.isPresent()) {
+            return Optional.of(CommentMapper.INSTANCE.toDto(commentOptional.get()));
+        }
+        Comment comment = commentRepository.getReferenceById(id);
+        if (comment != null) {
+            commentsCacheManager.getCache().put(id, comment);
+        }
+        return Optional.ofNullable(CommentMapper.INSTANCE.toDto(comment));
     }
 
     @Override
