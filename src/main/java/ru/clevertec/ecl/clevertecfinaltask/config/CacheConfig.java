@@ -1,4 +1,6 @@
 package ru.clevertec.ecl.clevertecfinaltask.config;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import ru.clevertec.ecl.clevertecfinaltask.cache.Cache;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,11 +16,14 @@ import ru.clevertec.ecl.clevertecfinaltask.cache.Cache;
 import ru.clevertec.ecl.clevertecfinaltask.cache.impl.LFUCache;
 import ru.clevertec.ecl.clevertecfinaltask.cache.impl.LRUCache;
 import ru.clevertec.ecl.clevertecfinaltask.cache.impl.RedisCache;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 @Configuration
 @RequiredArgsConstructor
-@ComponentScan("ru.clevertec.ecl.clevertecfinaltask.service.impl")
+@ComponentScan("ru.clevertec.ecl.clevertecfinaltask.service")
+@ComponentScan("ru.clevertec.ecl.clevertecfinaltask.cache")
 public class CacheConfig {
 
     private final Environment environment;
@@ -41,6 +46,26 @@ public class CacheConfig {
     @Profile("redis")
     public Cache<String, Object> redisCache(RedisTemplate<String, Object> redisTemplate) {
         return new RedisCache<>(redisTemplate);
+    }
+    @Bean
+    public Cache<String, Object> cache() {
+        String activeProfile = Arrays.stream(environment.getActiveProfiles()).findFirst().orElse("");
+        if (activeProfile.equalsIgnoreCase("LRU")) {
+            return lruCache();
+        } else if (activeProfile.equalsIgnoreCase("LFU")) {
+            return lfuCache();
+        } else if (activeProfile.equalsIgnoreCase("redis")) {
+            return redisCache(redisTemplate(redisConnectionFactory()));
+        }
+        throw new IllegalArgumentException("Invalid cache profile: " + activeProfile);
+    }
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
+        jedisConnectionFactory.setHostName("localhost"); // Установите хост Redis
+        jedisConnectionFactory.setPort(6379); // Установите порт Redis
+        return jedisConnectionFactory;
     }
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
