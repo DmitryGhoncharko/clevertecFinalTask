@@ -64,8 +64,8 @@ public class CacheConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName("localhost"); // Установите хост Redis
-        jedisConnectionFactory.setPort(6379); // Установите порт Redis
+        jedisConnectionFactory.setHostName(environment.getProperty("cache.host"));
+        jedisConnectionFactory.setPort(Integer.parseInt(environment.getProperty("cache.port")));
         return jedisConnectionFactory;
     }
     @Bean

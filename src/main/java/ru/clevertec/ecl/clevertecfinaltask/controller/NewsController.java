@@ -1,5 +1,6 @@
 package ru.clevertec.ecl.clevertecfinaltask.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,12 @@ public class NewsController {
     private final NewsService newsService;
 
     @PostMapping
-    public ResponseEntity<NewsDTO> createNews(@RequestBody @Validated(Views.SaveView.class) NewsDTO newsDTO) {
+    public ResponseEntity<NewsDTO> createNews(@RequestBody @Validated(Views.SaveView.class) @Valid NewsDTO newsDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(newsService.create(newsDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NewsDTO> updateNews(@RequestBody @Validated(Views.SaveView.class) NewsDTO newsDTO) {
+    public ResponseEntity<NewsDTO> updateNews(@RequestBody @Validated(Views.SaveView.class)@Valid NewsDTO newsDTO) {
         return ResponseEntity.ok(newsService.update(newsDTO));
 
     }

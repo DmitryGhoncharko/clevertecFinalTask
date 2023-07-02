@@ -27,9 +27,6 @@ public class TestDatabaseConfig {
     @Value("${spring.liquibase.change-log}")
     private String changeLog;
 
-    @Value("classpath:db.changelog/data.sql")
-    private org.springframework.core.io.Resource dataScript;
-
     @Bean
     @Profile("test")
     public DataSource testDataSource() {

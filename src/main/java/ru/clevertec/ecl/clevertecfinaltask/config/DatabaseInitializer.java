@@ -13,7 +13,7 @@ public class DatabaseInitializer {
     private final DataSource dataSource;
     private final org.springframework.core.io.Resource dataScript;
 
-    public DatabaseInitializer(DataSource dataSource, @Value("classpath:db.changelog/changes/data.sql") org.springframework.core.io.Resource dataScript) {
+    public DatabaseInitializer(DataSource dataSource, @Value("${datascript.path}") org.springframework.core.io.Resource dataScript) {
         this.dataSource = dataSource;
         this.dataScript = dataScript;
     }

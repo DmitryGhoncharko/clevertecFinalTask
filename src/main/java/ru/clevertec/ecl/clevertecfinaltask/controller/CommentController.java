@@ -1,5 +1,6 @@
 package ru.clevertec.ecl.clevertecfinaltask.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -28,12 +29,12 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentDTO> createComment(@RequestBody @Validated(Views.SaveView.class) CommentDTO commentDTO) {
+    public ResponseEntity<CommentDTO> createComment(@RequestBody @Validated(Views.SaveView.class) @Valid CommentDTO commentDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(commentDTO));
     }
 
     @PutMapping
-    public ResponseEntity<CommentDTO> updateComment(@RequestBody @Validated(Views.SaveView.class) CommentDTO commentDTO) {
+    public ResponseEntity<CommentDTO> updateComment(@RequestBody @Validated(Views.SaveView.class) @Valid CommentDTO commentDTO) {
         return ResponseEntity.ok(commentService.update(commentDTO));
     }
 
