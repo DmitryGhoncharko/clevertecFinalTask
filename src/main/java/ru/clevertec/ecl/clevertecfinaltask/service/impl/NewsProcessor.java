@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ru.clevertec.ecl.clevertecfinaltask.cache.NewsCacheManager;
+import ru.clevertec.ecl.clevertecfinaltask.cache.Cache;
 import ru.clevertec.ecl.clevertecfinaltask.dto.NewsDTO;
 import ru.clevertec.ecl.clevertecfinaltask.entity.Comment;
 import ru.clevertec.ecl.clevertecfinaltask.entity.News;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class NewsProcessor {
     private final NewsRepository newsRepository;
-    private final NewsCacheManager newsCacheManager;
+    private final Cache<Long,News> newsCache;
     @Transactional
     public NewsDTO proceedCreateOrUpdateNews(NewsDTO newsDTO) {
         newsDTO.setTime(LocalDateTime.now());
@@ -28,7 +28,7 @@ public class NewsProcessor {
         newsAfterMapping.getComments().forEach(comment -> comment.setNews(newsAfterMapping));
         News news = newsRepository.save(newsAfterMapping);
         Hibernate.initialize(news.getComments().stream().map(Comment::getId));
-        newsCacheManager.getCache().put(news.getId(),news);
+        newsCache.put(news.getId(),news);
         return NewsMapper.INSTANCE.toDto(news);
     }
 }

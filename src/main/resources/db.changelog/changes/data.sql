@@ -1,3 +1,5 @@
+delete  from comments;
+delete from news;
 insert into news(id,text,time,title) values
                                       (1,'news1',CURRENT_TIMESTAMP,'title1'),
                                       (2,'news2',CURRENT_TIMESTAMP,'title2'),

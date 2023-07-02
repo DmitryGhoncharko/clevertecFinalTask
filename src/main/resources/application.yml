@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: prod,redis
   datasource:
     url: jdbc:postgresql://localhost:5432/task
     username: postgres
@@ -11,5 +11,5 @@ spring:
   main:
     allow-bean-definition-overriding: true
 cache:
-  algorithm: LRU
-  maxSize: 100
+  lru-max-size: 100
+  lfu-max-size: 100

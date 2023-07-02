@@ -1,12 +1,12 @@
 package ru.clevertec.ecl.clevertecfinaltask.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.ecl.clevertecfinaltask.cache.Cache;
-import ru.clevertec.ecl.clevertecfinaltask.cache.NewsCacheManager;
 import ru.clevertec.ecl.clevertecfinaltask.dto.NewsDTO;
 import ru.clevertec.ecl.clevertecfinaltask.entity.News;
 import ru.clevertec.ecl.clevertecfinaltask.error.CannotDeleteNewsError;
@@ -20,11 +20,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Profile("redis")
 public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
     private final NewsProcessor newsProcessor;
 
-    private final NewsCacheManager newsCacheManager;
+    private final Cache<Long,News> newsCache;
+
     @Override
     @Transactional
     public NewsDTO create(NewsDTO newsDTO) {
@@ -47,7 +49,7 @@ public class NewsServiceImpl implements NewsService {
         Optional<News> news = newsRepository.findById(id);
         if (news.isPresent()) {
             newsRepository.deleteById(id);
-            newsCacheManager.getCache().remove(id);
+            newsCache.remove(id);
             return;
         }
         throw new CannotDeleteNewsError(id.toString());
@@ -56,13 +58,13 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional(readOnly = true)
     public Optional<NewsDTO> getById(Long id) {
-        Optional<News> newsOptional = newsCacheManager.getCache().get(id);
-        if(newsOptional.isPresent()){
+        Optional<News> newsOptional = newsCache.get(id);
+        if (newsOptional.isPresent()) {
             return Optional.of(NewsMapper.INSTANCE.toDto(newsOptional.get()));
         }
         News news = newsRepository.getReferenceById(id);
-        if(news!=null){
-            newsCacheManager.getCache().put(id,news);
+        if (news != null) {
+            newsCache.put(id, news);
         }
         return Optional.ofNullable(NewsMapper.INSTANCE.toDto(news));
     }
