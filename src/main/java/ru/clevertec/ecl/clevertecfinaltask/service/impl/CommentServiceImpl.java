@@ -30,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
 
-    private final Cache<Long,Comment> commentCache;
+    private final Cache<String,Object> commentCache;
 
 
     @Override
@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setNews(newsOptional.get());
             Comment commentAfetSave = commentRepository.save(comment);
             Hibernate.initialize(commentAfetSave.getNews().getId());
-            commentCache.put(commentAfetSave.getId(), commentAfetSave);
+            commentCache.put("comment_" + commentAfetSave.getId(), commentAfetSave);
             return CommentMapper.INSTANCE.toDto(commentAfetSave);
         }
         throw new CannotCreateCommentError(commentDTO.toString());
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setText(commentDTO.getText());
             comment.setUsername(commentDTO.getUsername());
             Comment commentAfterSave = commentRepository.save(comment);
-            commentCache.put(commentAfterSave.getId(), commentAfterSave);
+            commentCache.put("comment_" + commentAfterSave.getId(), commentAfterSave);
             return CommentMapper.INSTANCE.toDto(commentAfterSave);
         }
         throw new CannotUpdateCommentError(commentDTO.toString());
@@ -76,7 +76,7 @@ public class CommentServiceImpl implements CommentService {
         Optional<Comment> comment = commentRepository.findById(id);
         if (comment.isPresent()) {
             commentRepository.deleteById(id);
-            commentCache.remove(id);
+            commentCache.remove("comment_" + id);
             return;
         }
         throw new CannotDeleteCommentError(id.toString());
@@ -85,13 +85,13 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public Optional<CommentDTO> getById(Long id) {
-        Optional<Comment> commentOptional = commentCache.get(id);
-        if (commentOptional.isPresent()) {
-            return Optional.of(CommentMapper.INSTANCE.toDto(commentOptional.get()));
+        Optional<Object> commentOptional = commentCache.get("comment_" + id);
+        if (commentOptional.isPresent() && commentOptional.get() instanceof Comment) {
+            return Optional.of(CommentMapper.INSTANCE.toDto((Comment) commentOptional.get()));
         }
         Comment comment = commentRepository.getReferenceById(id);
         if (comment != null) {
-            commentCache.put(id, comment);
+            commentCache.put("comment_" + id, comment);
         }
         return Optional.ofNullable(CommentMapper.INSTANCE.toDto(comment));
     }

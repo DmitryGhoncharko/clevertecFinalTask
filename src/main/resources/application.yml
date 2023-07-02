@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod,redis
+    active: redis ,prod
   datasource:
     url: jdbc:postgresql://localhost:5432/task
     username: postgres
@@ -13,3 +13,4 @@ spring:
 cache:
   lru-max-size: 100
   lfu-max-size: 100
+

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class NewsProcessor {
     private final NewsRepository newsRepository;
-    private final Cache<Long,News> newsCache;
+    private final Cache<String,Object> newsCache;
     @Transactional
     public NewsDTO proceedCreateOrUpdateNews(NewsDTO newsDTO) {
         newsDTO.setTime(LocalDateTime.now());
@@ -28,7 +28,7 @@ public class NewsProcessor {
         newsAfterMapping.getComments().forEach(comment -> comment.setNews(newsAfterMapping));
         News news = newsRepository.save(newsAfterMapping);
         Hibernate.initialize(news.getComments().stream().map(Comment::getId));
-        newsCache.put(news.getId(),news);
+        newsCache.put("news_"+news.getId(),news);
         return NewsMapper.INSTANCE.toDto(news);
     }
 }

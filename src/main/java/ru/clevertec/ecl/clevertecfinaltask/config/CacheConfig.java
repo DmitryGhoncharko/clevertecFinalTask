@@ -1,4 +1,5 @@
 package ru.clevertec.ecl.clevertecfinaltask.config;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import ru.clevertec.ecl.clevertecfinaltask.cache.Cache;
 
@@ -12,7 +13,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import ru.clevertec.ecl.clevertecfinaltask.cache.Cache;
 import ru.clevertec.ecl.clevertecfinaltask.cache.impl.LFUCache;
 import ru.clevertec.ecl.clevertecfinaltask.cache.impl.LRUCache;
 import ru.clevertec.ecl.clevertecfinaltask.cache.impl.RedisCache;
@@ -43,6 +43,7 @@ public class CacheConfig {
     }
 
     @Bean
+    @Primary
     @Profile("redis")
     public Cache<String, Object> redisCache(RedisTemplate<String, Object> redisTemplate) {
         return new RedisCache<>(redisTemplate);

@@ -25,7 +25,7 @@ public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
     private final NewsProcessor newsProcessor;
 
-    private final Cache<Long,News> newsCache;
+    private final Cache<String,Object> newsCache;
 
     @Override
     @Transactional
@@ -49,7 +49,7 @@ public class NewsServiceImpl implements NewsService {
         Optional<News> news = newsRepository.findById(id);
         if (news.isPresent()) {
             newsRepository.deleteById(id);
-            newsCache.remove(id);
+            newsCache.remove("news_" + id);
             return;
         }
         throw new CannotDeleteNewsError(id.toString());
@@ -58,13 +58,13 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional(readOnly = true)
     public Optional<NewsDTO> getById(Long id) {
-        Optional<News> newsOptional = newsCache.get(id);
-        if (newsOptional.isPresent()) {
-            return Optional.of(NewsMapper.INSTANCE.toDto(newsOptional.get()));
+        Optional<Object> newsOptional = newsCache.get("news_" + id);
+        if (newsOptional.isPresent() && newsOptional.get() instanceof News) {
+            return Optional.of(NewsMapper.INSTANCE.toDto((News) newsOptional.get()));
         }
         News news = newsRepository.getReferenceById(id);
         if (news != null) {
-            newsCache.put(id, news);
+            newsCache.put("news_" + id, news);
         }
         return Optional.ofNullable(NewsMapper.INSTANCE.toDto(news));
     }
