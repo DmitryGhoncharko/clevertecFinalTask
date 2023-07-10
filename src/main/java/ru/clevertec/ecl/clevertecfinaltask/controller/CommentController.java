@@ -1,5 +1,9 @@
 package ru.clevertec.ecl.clevertecfinaltask.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -25,37 +29,66 @@ import java.util.List;
 @RequestMapping("/v1/api/comments")
 @Validated
 @RequiredArgsConstructor
+@Api(tags = "Comment Controller")
 public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentDTO> createComment(@RequestBody @Validated(Views.SaveView.class) @Valid CommentDTO commentDTO) {
+    @ApiOperation("Create a new comment")
+    @ApiResponse(code = 201, message = "Comment created successfully", response = CommentDTO.class)
+    public ResponseEntity<CommentDTO> createComment(
+            @RequestBody @Validated(Views.SaveView.class) @Valid CommentDTO commentDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(commentDTO));
     }
 
     @PutMapping
-    public ResponseEntity<CommentDTO> updateComment(@RequestBody @Validated(Views.SaveView.class) @Valid CommentDTO commentDTO) {
+    @ApiOperation("Update an existing comment")
+    @ApiResponse(code = 200, message = "Comment updated successfully", response = CommentDTO.class)
+    public ResponseEntity<CommentDTO> updateComment(
+            @RequestBody @Validated(Views.SaveView.class) @Valid CommentDTO commentDTO) {
         return ResponseEntity.ok(commentService.update(commentDTO));
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation("Delete a comment by ID")
+    @ApiResponse(code = 204, message = "Comment deleted successfully")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         commentService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("Get a comment by ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Comment found", response = CommentDTO.class),
+            @ApiResponse(code = 404, message = "Comment not found")
+    })
     public ResponseEntity<CommentDTO> getCommentById(@PathVariable Long id) {
-        return commentService.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return commentService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/all/{pageNumber}")
-    public ResponseEntity<List<CommentDTO>> getAllComments(@PathVariable int pageNumber, @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+    @ApiOperation("Get all comments")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Comments retrieved successfully", response = CommentDTO.class, responseContainer = "List")
+    })
+    public ResponseEntity<List<CommentDTO>> getAllComments(
+            @PathVariable int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
         return ResponseEntity.ok(commentService.findAll(PageRequest.of(pageNumber, pageSize)));
     }
 
     @GetMapping("/search/{keyword}/{pageNumber}")
-    public ResponseEntity<List<CommentDTO>> searchCommentsByTextOrUsername(@PathVariable String keyword, @PathVariable int pageNumber, @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+    @ApiOperation("Search comments by text or username")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Comments found", response = CommentDTO.class, responseContainer = "List")
+    })
+    public ResponseEntity<List<CommentDTO>> searchCommentsByTextOrUsername(
+            @PathVariable String keyword,
+            @PathVariable int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
         return ResponseEntity.ok(commentService.searchByTextOrUsername(keyword, PageRequest.of(pageNumber, pageSize)));
     }
 }
