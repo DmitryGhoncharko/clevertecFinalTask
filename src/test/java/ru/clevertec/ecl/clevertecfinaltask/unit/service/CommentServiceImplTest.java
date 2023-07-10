@@ -43,7 +43,7 @@ class CommentServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
     @Test
-    void testCreate_NonExistingNews_ThrowsCannotCreateCommentError() {
+    void testCreateNonExistingNewsThrowsCannotCreateCommentError() {
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setUsername("John");
         commentDTO.setTime(LocalDateTime.now());
@@ -53,7 +53,7 @@ class CommentServiceImplTest {
         assertThrows(CannotCreateCommentError.class, () -> commentService.create(commentDTO));
     }
     @Test
-    void testUpdate_NonExistingComment_ThrowsCannotUpdateCommentError() {
+    void testUpdateNonExistingCommentThrowsCannotUpdateCommentError() {
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(1L);
         commentDTO.setUsername("John");
@@ -65,7 +65,7 @@ class CommentServiceImplTest {
     }
 
     @Test
-    void testUpdate_NonExistingNews_ThrowsCannotUpdateCommentError() {
+    void testUpdateNonExistingNewsThrowsCannotUpdateCommentError() {
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(1L);
         commentDTO.setUsername("John");
@@ -80,7 +80,7 @@ class CommentServiceImplTest {
     }
 
     @Test
-    void testDelete_ExistingComment_DeletesComment() {
+    void testDeleteExistingCommentDeletesComment() {
         Long commentId = 1L;
         Comment existingComment = new Comment();
         existingComment.setId(commentId);
@@ -91,7 +91,7 @@ class CommentServiceImplTest {
     }
 
     @Test
-    void testDelete_NonExistingComment_ThrowsCannotDeleteCommentError() {
+    void testDeleteNonExistingCommentThrowsCannotDeleteCommentError() {
         Long commentId = 1L;
         when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
         assertThrows(CannotDeleteCommentError.class, () -> commentService.delete(commentId));

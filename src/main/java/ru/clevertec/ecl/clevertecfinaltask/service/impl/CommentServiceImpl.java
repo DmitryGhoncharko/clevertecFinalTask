@@ -30,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
 
-    private final Cache<String,Object> commentCache;
+    private final Cache<String, Object> commentCache;
 
 
     @Override

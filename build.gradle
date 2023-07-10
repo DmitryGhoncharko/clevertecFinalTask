@@ -20,6 +20,7 @@ configurations {
 
 repositories {
     mavenCentral()
+
 }
 
 ext {
@@ -32,7 +33,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-//    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
@@ -50,6 +51,9 @@ dependencies {
     implementation 'redis.clients:jedis:3.7.0'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '3.1.1'
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2', ext: 'pom'
+    testImplementation 'org.testcontainers:testcontainers:1.16.0'
+    testImplementation 'org.testcontainers:junit-jupiter:1.16.0'
+    testImplementation 'org.testcontainers:postgresql:1.16.0'
 
 }
 
