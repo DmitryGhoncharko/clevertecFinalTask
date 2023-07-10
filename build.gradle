@@ -20,6 +20,7 @@ configurations {
 
 repositories {
     mavenCentral()
+
 }
 
 ext {
@@ -29,8 +30,6 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -41,6 +40,22 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.1.1'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7'
+    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.8'
+    implementation 'org.liquibase:liquibase-core:4.5.0'
+    runtimeOnly 'org.liquibase:liquibase-groovy-dsl:3.0.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.1.1'
+    implementation 'redis.clients:jedis:3.7.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '3.1.1'
+    testImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2', ext: 'pom'
+    testImplementation 'org.testcontainers:testcontainers:1.16.0'
+    testImplementation 'org.testcontainers:junit-jupiter:1.16.0'
+    testImplementation 'org.testcontainers:postgresql:1.16.0'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 }
 
 tasks.named('test') {

@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: redis ,prod
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task
+    username: postgres
+    password: jmXzj3eV
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db.changelog/changelog-master.xml
+  main:
+    allow-bean-definition-overriding: true
+cache:
+  lru-max-size: 100
+  lfu-max-size: 100
+  host: 127.0.0.1
+  port: 6379
+logging:
+  level:
+    root: INFO
+datascript:
+  path: classpath:db.changelog/changes/data.sql
